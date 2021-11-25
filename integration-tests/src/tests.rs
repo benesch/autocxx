@@ -7105,6 +7105,34 @@ fn test_class_having_private_method() {
     run_test("", hdr, rs, &[], &["A"]);
 }
 
+#[test]
+fn test_nested_class_methods() {
+    let hdr = indoc! {"
+    #include <cstdint>
+    class A {
+    public:
+        virtual ~A() {}
+        struct B {
+            virtual void b() const {}
+        };
+        virtual void a() const {}
+        struct C {
+            virtual void b() const {}
+        };
+        virtual void c() const {}
+        struct D {
+            virtual void b() const {}
+        };
+    };
+    "};
+    let rs = quote! {
+        let a = ffi::A::make_unique();
+        a.a();
+        a.c();
+    };
+    run_test("", hdr, rs, &["A"], &[]);
+}
+
 // Yet to test:
 // - Ifdef
 // - Out param pointers
